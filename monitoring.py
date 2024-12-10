@@ -1,26 +1,32 @@
 from telethon import TelegramClient, events
-import credentials 
+import credentials
 
-# Assign credentials
+# Credenciales de tu API
 api_id = credentials.api_id
 api_hash = credentials.api_hash
-bot_token = credentials.bot_token
 
-# Configure the bot client
-bot = TelegramClient('bot_session', api_id, api_hash).start(bot_token=bot_token)
+# Crea el cliente usando una sesión de usuario
+client = TelegramClient('user_session', api_id, api_hash)
 
-# ID or @username of the channel to monitor
-channel_to_monitor = '@lookerstudioespanol'
+# Canal a monitorear
+# channel_to_monitor = -1002094282515
+# channel_to_monitor = 771096498
+channel_to_monitor = 616044209
 
-@bot.on(events.NewMessage(chats=channel_to_monitor))
+# Tu chat_id personal
+your_chat_id = 616044209
+
+@client.on(events.NewMessage(chats=channel_to_monitor))
 async def monitor(event):
-    message = event.message.message  # Text of the received message
-    # Check for the keywords "SELL ENTRY" or "BUY ENTRY"
+    print(event.message.message)
+    message = event.message.message  # Texto del mensaje recibido
+    # Verificar palabras clave
     if 'sell entry' in message.lower() or 'buy entry' in message.lower():
-        # Send the detected message to your chat ID
-        your_chat_id = event.message.sender_id  # Change this if you need a fixed ID
-        await bot.send_message(your_chat_id, f"Detected message: {message}")
+        # Enviar notificación a tu chat personal
+        await client.send_message(your_chat_id, f"Se detectó un mensaje: {message}")
 
-# Start the bot
-print("Bot is running...")
-bot.run_until_disconnected()
+# Iniciar el cliente (te pedirá el teléfono y código la primera vez)
+client.start()
+
+print("El cliente de usuario está ejecutándose...")
+client.run_until_disconnected()
